@@ -6,7 +6,7 @@ public class MysqlCon {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/nguyen" +
-                    "?autoReconnect=true&useSSL=false","root","4200");
+                    "?autoReconnect=true&useSSL=false","root","4200");//password will be change
 //here wu is database name, root is username and password
                     Statement stmt=con.createStatement();
             ResultSet rs=stmt.executeQuery("select * from Student");
