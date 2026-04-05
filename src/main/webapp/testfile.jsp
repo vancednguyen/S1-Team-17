@@ -23,7 +23,7 @@
 
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nguyen?autoReconnect=true&useSSL=false",user, password);
 
-            out.println(db + " database successfully opened.<br/><br/>");
+            out.println(db + " database successfully loaded.<br/><br/>");
 
             out.println("Initial entries in table \"Student\": <br/>");
 
