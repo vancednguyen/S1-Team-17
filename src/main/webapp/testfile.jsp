@@ -13,7 +13,7 @@
         <td>Major</td>
     </tr>
         <%
-     String db = "jdbc:mysql://localhost:3306/nguyen";
+     String db = "jdbc:mysql://localhost:3306/ouroboro_ev";
         String user; // assumes database name is the same as username
           user = "root";
         String password = "4200";
@@ -23,13 +23,13 @@
 
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nguyen?autoReconnect=true&useSSL=false",user, password);
 
-            out.println(db + " database successfully opened.<br/><br/>");
+            out.println(db + " database successfully loaded.<br/><br/>");
 
             out.println("Initial entries in table \"Student\": <br/>");
 
             Statement stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Student");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM user");
 
             while (rs.next()) {
          out.println("<tr>" + "<td>" +  rs.getInt(1) + "</td>"+ "<td>" +    rs.getString(2) + "</td>"+   "<td>" + rs.getString(3) + "</td>"  + "</tr>");
