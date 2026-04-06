@@ -42,8 +42,4 @@ build/
 /.mvn/wrapper/maven-wrapper.properties
 /.mvn/wrapper/maven-wrapper.jar
 /out/
-/out/artifacts/
-/out/artifacts/Ouroboros/cmpe157/
-/out/artifacts/Ouroboros/cmpe157/ouroboros/
-/out/artifacts/Ouroboros/cmpe157/ouroboros/dao/
-out/artifacts/Ouroboros/cmpe157/ouroboros/dao/carDao.java
+
