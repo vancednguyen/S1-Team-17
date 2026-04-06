@@ -23,7 +23,7 @@
 
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ouroboro_ev?autoReconnect=true&useSSL=false",user, password);
 
-            out.println(db + " database successfully opened.<br/><br/>");
+            out.println(db + " database successfully loaded.<br/><br/>");
 
             out.println("Initial entries in table \"Student\": <br/>");
 
