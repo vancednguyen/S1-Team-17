@@ -21,7 +21,7 @@
             java.sql.Connection con;
             Class.forName("com.mysql.jdbc.Driver");
 
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nguyen?autoReconnect=true&useSSL=false",user, password);
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ouroboro_ev?autoReconnect=true&useSSL=false",user, password);
 
             out.println(db + " database successfully opened.<br/><br/>");
 
