@@ -1,79 +1,60 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List" %>
-<%@ page import="cmpe157.ouroboros.model.Car" %>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ouroboros EV - Home</title>
+    <title>Ouroboros EV</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #0a0a0a; color: #eee; }
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 2.5rem;
+            border-bottom: 1px solid #1e1e1e;
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
+        .logo { font-size: 17px; font-weight: 600; color: #fff; }
+        .logo span { color: #3dba6f; }
+        .nav-links { display: flex; align-items: center; gap: 10px; }
+        .nav-links a { text-decoration: none; font-size: 14px; }
+        .link-plain { color: #aaa; padding: 7px 14px; border-radius: 7px; border: 1px solid #2a2a2a; }
+        .link-login { color: #ddd; padding: 7px 14px; border-radius: 7px; border: 1px solid #333; }
+        .link-started { background: #3dba6f; color: #fff; padding: 7px 16px; border-radius: 7px; font-weight: 500; }
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 2rem 90px;
         }
-        th {
-            background-color: #f4f4f4;
-        }
-        tr:nth-child(even) {
-            background-color: #fafafa;
-        }
+        .hero h1 { font-size: 52px; font-weight: 700; color: #fff; line-height: 1.15; letter-spacing: -1px; margin-bottom: 1rem; }
+        .hero h1 span { color: #3dba6f; }
+        .hero p { font-size: 17px; color: #777; max-width: 420px; line-height: 1.65; margin-bottom: 2.2rem; }
+        .hero-btns { display: flex; gap: 12px; }
+        .btn-rent { background: #3dba6f; color: #fff; padding: 13px 28px; border-radius: 8px; font-size: 15px; font-weight: 500; text-decoration: none; }
+        .btn-list { background: transparent; color: #ccc; padding: 13px 28px; border-radius: 8px; font-size: 15px; border: 1px solid #2e2e2e; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<h1>Available EV Cars</h1>
+<nav>
+    <div class="logo">Ouroboros<span> EV</span></div>
+    <div class="nav-links">
+        <a href="browseCars.jsp" class="link-plain">Browse cars</a>
+        <a href="login.jsp" class="link-login">Log in</a>
+        <a href="register.jsp" class="link-started">Get started</a>
+    </div>
+</nav>
 
-<%
-    List<Car> cars = (List<Car>) request.getAttribute("cars");
-    if (cars == null || cars.isEmpty()) {
-%>
-<p>No Cars available right now.</p>
-<%
-} else {
-%>
-
-<table>
-    <thead>
-    <tr>
-        <th>Manufacturer & Model</th>
-        <th>Year</th>
-        <th>Price ($/day)</th>
-        <th>Seats</th>
-        <th>Bag Space</th>
-        <th>Transmission</th>
-        <th>Car Type</th>
-        <th>Features</th>
-    </tr>
-    </thead>
-    <tbody>
-    <%
-        for (Car car : cars) {
-    %>
-    <tr>
-        <td><%= car.getManufacturer() %> <%= car.getModel() %></td>
-        <td><%= car.getYear() %></td>
-        <td>$<%= car.getPrice() %></td>
-        <td><%= car.getSeats() %></td>
-        <td><%= car.getBagCapacity() %></td>
-        <td><%= car.getTransmissionType() %></td>
-        <td><%= car.getCarType() %></td>
-        <td><%= car.getFeatures() %></td>
-    </tr>
-    <%
-        }
-    %>
-    </tbody>
-</table>
-
-<%
-    }
-%>
+<div class="hero">
+    <h1>Rent electric.<br><span>Drive sustainable.</span></h1>
+    <p>A peer-to-peer EV marketplace connecting owners and renters across California.</p>
+    <div class="hero-btns">
+        <a href="browseCars.jsp" class="btn-rent">Rent a car</a>
+        <a href="register.jsp?type=owner" class="btn-list">List your EV</a>
+    </div>
+</div>
 
 </body>
 </html>
