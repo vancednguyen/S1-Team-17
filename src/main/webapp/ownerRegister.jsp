@@ -78,7 +78,6 @@
         <h1>Owner registration</h1>
         <div class="sub">Create your owner account to list your EV</div>
 
-        <%-- Show error message if any --%>
         <% String error = (String) request.getAttribute("error");
            if (error != null) { %>
             <div class="error"><%= error %></div>
@@ -110,6 +109,11 @@
             <div class="field">
                 <label>License expiration date *</label>
                 <input type="date" name="licenseExpiration" required />
+            </div>
+            <div class="field">
+                <label>Location *</label>
+                <input type="text" name="location" placeholder="e.g. San Jose, CA" required />
+                <div class="hint">Your general area helps renters find your vehicle</div>
             </div>
             <button type="submit" class="btn-submit">Create owner account</button>
         </form>
