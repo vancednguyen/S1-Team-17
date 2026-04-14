@@ -41,7 +41,7 @@
 <nav>
     <div class="logo">Ouroboros<span> EV</span></div>
     <div class="nav-links">
-        <a href="browseCars.jsp" class="link-plain">Browse cars</a>
+        <a href="Browse-Cars" class="link-plain">Browse cars</a>
         <a href="login.jsp" class="link-login">Log in</a>
         <a href="register.jsp" class="link-started">Get started</a>
     </div>
@@ -51,7 +51,7 @@
     <h1>Rent electric.<br><span>Drive sustainable.</span></h1>
     <p>A peer-to-peer EV marketplace connecting owners and renters across California.</p>
     <div class="hero-btns">
-        <a href="browseCars.jsp" class="btn-rent">Rent a car</a>
+        <a href="Browse-Cars" class="btn-rent">Rent a car</a>
         <a href="register.jsp?type=owner" class="btn-list">List your EV</a>
     </div>
 </div>
