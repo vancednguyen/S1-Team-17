@@ -42,8 +42,24 @@
     <div class="logo">Ouroboros<span> EV</span></div>
     <div class="nav-links">
         <a href="Browse-Cars" class="link-plain">Browse cars</a>
+        <%-- Checks if user is logged in --%>
+        <% if (session.getAttribute("userEmail") != null) { %>
+
+        <%-- Shows username if logged in --%>
+        <span class="link-plain" style="border: none;">Welcome, <%= session.getAttribute("userName") %></span>
+
+        <%-- Shows logout button if logged in --%>
+        <form action="LogoutServlet" method="get" style="display: inline;">
+            <button type="submit" class="link-login" style="cursor: pointer; background: transparent;">Log out</button>
+        </form>
+
+        <% } else { %>
+
+        <%-- Shows login and register buttons if not logged in --%>
         <a href="login.jsp" class="link-login">Log in</a>
         <a href="register.jsp" class="link-started">Get started</a>
+
+        <% } %>
     </div>
 </nav>
 
