@@ -42,8 +42,26 @@
     <div class="logo">Ouroboros<span> EV</span></div>
     <div class="nav-links">
         <a href="index.jsp" class="link-plain">Home</a>
+
+        <% if (session.getAttribute("userEmail") != null) { %>
+
+        <span class="link-plain" style="border: none;">
+                Welcome, <%= session.getAttribute("userName") %>
+            </span>
+
+        <form action="LogoutServlet" method="get" style="display: inline;">
+            <button type="submit" class="link-login"
+                    style="cursor: pointer; background: transparent;">
+                Log out
+            </button>
+        </form>
+
+        <% } else { %>
+
         <a href="login.jsp" class="link-login">Log in</a>
         <a href="register.jsp" class="link-started">Get started</a>
+
+        <% } %>
     </div>
 </nav>
 <form action="Browse-Cars" method="get" class="search-form">

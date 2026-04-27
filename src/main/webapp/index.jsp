@@ -68,7 +68,16 @@
     <p>A peer-to-peer EV marketplace connecting owners and renters across California.</p>
     <div class="hero-btns">
         <a href="Browse-Cars" class="btn-rent">Rent a car</a>
-        <a href="register.jsp?type=owner" class="btn-list">List your EV</a>
+        <%
+            String userRole = (String) session.getAttribute("userRole");
+            boolean loggedIn = session.getAttribute("userEmail") != null;
+        %>
+
+        <% if (loggedIn && "owner".equals(userRole)) { %>
+        <a href="Owner-Cars" class="btn-list">List or Edit your EVs</a>
+        <% } else { %>
+        <a href="Browse-Cars" class="btn-list">Browse Cars</a>
+        <% } %>
     </div>
 </div>
 

@@ -128,4 +128,147 @@ public class carDao {
         car.setAvailability(rs.getString("availability"));
         return car;
     }
+    public List<Car> getCarsByOwnerId(int ownerId) {
+        List<Car> cars = new ArrayList<>();
+
+        String sql = "SELECT car_id, model, year, manufacturer, car_type, transmission_type, " +
+                "features, seats, bag_capacity, price, availability " +
+                "FROM car WHERE user_id = ? ORDER BY price ASC";
+
+        try (Connection conn = DBinfo.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, ownerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    cars.add(mapRowToCar(rs));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cars;
+    }
+    public boolean addCar(int ownerId, String manufacturer, String model, int year, int seats,
+                          int bagCapacity, String transmissionType, String carType,
+                          String features, String availability, double price) {
+
+        String nextCarIdSql =
+                "SELECT COALESCE(MAX(CAST(SUBSTRING(car_id, 2) AS UNSIGNED)), 0) + 1 AS next_id FROM car";
+
+        String insertCarSql =
+                "INSERT INTO car (car_id, user_id, manufacturer, transmission_type, car_type, price, seats, features, year, model, bag_capacity, availability) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBinfo.getConnection()) {
+            String carId = null;
+
+            // Generate new car_id
+            try (PreparedStatement ps = conn.prepareStatement(nextCarIdSql);
+                 ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    carId = "C" + rs.getInt("next_id");
+                }
+            }
+
+            // Insert car
+            try (PreparedStatement insertCarStmt = conn.prepareStatement(insertCarSql)) {
+                insertCarStmt.setString(1, carId);
+                insertCarStmt.setInt(2, ownerId);
+                insertCarStmt.setString(3, manufacturer);
+                insertCarStmt.setString(4, transmissionType);
+                insertCarStmt.setString(5, carType);
+                insertCarStmt.setDouble(6, price);
+                insertCarStmt.setInt(7, seats);
+                insertCarStmt.setString(8, features);
+                insertCarStmt.setInt(9, year);
+                insertCarStmt.setString(10, model);
+                insertCarStmt.setInt(11, bagCapacity);
+                insertCarStmt.setString(12, availability);
+
+                int rows = insertCarStmt.executeUpdate();
+
+                System.out.println("Inserted rows: " + rows);
+                return rows > 0; // ✅ success if insert worked
+            }
+
+        } catch (Exception e) {
+            System.out.println("Add car failed:");
+            e.printStackTrace();
+            return false; //  failure
+        }
+    }
+    public Car getCarById(String carId, int ownerId) {
+        String sql = "SELECT car_id, model, year, manufacturer, car_type, transmission_type, " +
+                "features, seats, bag_capacity, price, availability " +
+                "FROM car WHERE car_id = ? AND user_id = ?";
+
+        try (Connection conn = DBinfo.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, carId);
+            ps.setInt(2, ownerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRowToCar(rs);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    public boolean updateCar(String carId, int ownerId, String manufacturer, String model, int year,
+                             int seats, int bagCapacity, String transmissionType, String carType,
+                             String features, String availability, double price) {
+
+        String sql = "UPDATE car SET manufacturer = ?, model = ?, year = ?, seats = ?, bag_capacity = ?, " +
+                "transmission_type = ?, car_type = ?, features = ?, availability = ?, price = ? " +
+                "WHERE car_id = ? AND user_id = ?";
+
+        try (Connection conn = DBinfo.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, manufacturer);
+            ps.setString(2, model);
+            ps.setInt(3, year);
+            ps.setInt(4, seats);
+            ps.setInt(5, bagCapacity);
+            ps.setString(6, transmissionType);
+            ps.setString(7, carType);
+            ps.setString(8, features);
+            ps.setString(9, availability);
+            ps.setDouble(10, price);
+            ps.setString(11, carId);
+            ps.setInt(12, ownerId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean deleteCar(String carId, int ownerId) {
+        String sql = "DELETE FROM car WHERE car_id = ? AND user_id = ?";
+
+        try (Connection conn = DBinfo.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, carId);
+            ps.setInt(2, ownerId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
