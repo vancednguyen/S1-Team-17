@@ -48,10 +48,8 @@
         <%-- Shows username if logged in --%>
         <span class="link-plain" style="border: none;">Welcome, <%= session.getAttribute("userName") %></span>
 
-        <%-- Shows logout button if logged in --%>
-        <form action="LogoutServlet" method="get" style="display: inline;">
-            <button type="submit" class="link-login" style="cursor: pointer; background: transparent;">Log out</button>
-        </form>
+        <%-- Shows account button if logged in --%>
+        <a href="account.jsp" class="link-plain">Account</a>>
 
         <% } else { %>
 
