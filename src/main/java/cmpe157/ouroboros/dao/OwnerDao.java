@@ -5,6 +5,7 @@ import cmpe157.ouroboros.util.DBinfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class OwnerDao {
 
@@ -50,6 +51,70 @@ String insertOwner = "INSERT INTO owner (user_id, location) VALUES (?, ?)";
             System.out.println("Error registering owner:");
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public boolean updateOwner(String userId, String user_name, String email, String phoneNumber) {
+        String updateUser = "UPDATE user SET user_name = ?, email = ?, phone_number = ? WHERE user_id = ?";
+
+        try (Connection conn = DBinfo.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psUser = conn.prepareStatement(updateUser)) {
+                psUser.setString(1, user_name);
+                psUser.setString(2, email);
+                psUser.setString(3, phoneNumber);
+                psUser.setString(4, userId);
+
+                int rowsAffected = psUser.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    conn.commit();
+                    return true;
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating owner: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteOwner(String userId) {
+        String deleteOwner = "DELETE FROM owner WHERE user_id = ?";
+        String deleteUser = "DELETE FROM user WHERE user_id = ?";
+        try (Connection conn = DBinfo.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps1 = conn.prepareStatement(deleteOwner)) {
+                ps1.setString(1, userId);
+                int rowsAffected = ps1.executeUpdate();
+                if (rowsAffected <= 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            try(PreparedStatement ps2 = conn.prepareStatement(deleteUser)) {
+                ps2.setString(1, userId);
+                int rowsAffected = ps2.executeUpdate();
+                if (rowsAffected <= 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

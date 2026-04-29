@@ -25,6 +25,7 @@ public class LoginServlet extends HttpServlet {
                 // Found in user table
                 int userId = result.getInt("user_id");
                 String userName = result.getString("user_name");
+                String phoneNumber = result.getString("phone_number");
                 String role = "renter";
 
                 // Check if they are an owner
@@ -42,6 +43,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("userEmail", email);
                 session.setAttribute("userName", userName);
                 session.setAttribute("userRole", role);
+                session.setAttribute("userPhoneNumber", phoneNumber);
                 response.sendRedirect("index.jsp");
 
             } else {
