@@ -59,11 +59,6 @@
             %>
 
             <div class="field">
-                <label>Id</label>
-                <span class="info-value"><%= session.getAttribute("userId") %></span>
-            </div>
-
-            <div class="field">
                 <label>Username</label>
                 <span class="info-value"><%= session.getAttribute("userName") %></span>
             </div>
@@ -84,6 +79,18 @@
             </div>
 
             <a href="accountEdit.jsp" class="link-plain">Edit Account</a>
+            <form action="AccountDeleteServlet" method="POST" onsubmit="return confirmDelete()">
+                <input type="hidden" name="userId" value=<%= session.getAttribute("userId")%>>
+                <input type="hidden" name="userRole" value=<%= session.getAttribute("userRole")%>>
+                <button class="link-plain">Delete My Account</button>
+            </form>
+
+
+            <script>
+                function confirmDelete() {
+                    return confirm("Are you absolutely sure? This action cannot be undone.");
+                }
+            </script>
             <%
                 } else {
                     response.sendRedirect("login.jsp");

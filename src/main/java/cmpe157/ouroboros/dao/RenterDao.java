@@ -5,6 +5,7 @@ import cmpe157.ouroboros.util.DBinfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class RenterDao {
 
@@ -43,6 +44,39 @@ public class RenterDao {
             System.out.println("Error registering renter:");
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public boolean deleteRenter(String userId) {
+        String deleteRenter = "DELETE FROM renter WHERE user_id = ?";
+        String deleteUser = "DELETE FROM user WHERE user_id = ?";
+        try (Connection conn = DBinfo.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps1 = conn.prepareStatement(deleteRenter)) {
+                ps1.setString(1, userId);
+                int rowsAffected = ps1.executeUpdate();
+                if (rowsAffected <= 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            try(PreparedStatement ps2 = conn.prepareStatement(deleteUser)) {
+                ps2.setString(1, userId);
+                int rowsAffected = ps2.executeUpdate();
+                if (rowsAffected <= 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
