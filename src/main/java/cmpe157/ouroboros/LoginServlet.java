@@ -1,6 +1,7 @@
 package cmpe157.ouroboros;
 
 import cmpe157.ouroboros.util.DBinfo;
+import cmpe157.ouroboros.util.PasswordUtil;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
@@ -14,15 +15,42 @@ public class LoginServlet extends HttpServlet {
 
         try (Connection conn = DBinfo.getConnection()) {
 
-            // Step 1 — check user table first
-            String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
+            // Step 1 — find user by email only. Do NOT search by password in SQL.
+            String sql = "SELECT * FROM user WHERE email = ?";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, email);
-            statement.setString(2, password);
             ResultSet result = statement.executeQuery();
 
             if (result.next()) {
-                // Found in user table
+                String storedPassword = result.getString("password");
+
+                boolean validPassword;
+
+                if (PasswordUtil.isBCryptHash(storedPassword)) {
+                    validPassword = PasswordUtil.checkPassword(password, storedPassword);
+                } else {
+                    // Temporary backwards compatibility for old plaintext test accounts.
+                    // Remove this block after you reset/migrate all old passwords.
+                    validPassword = password != null && password.equals(storedPassword);
+
+                    // If the old plaintext password was correct, immediately replace it with a hash.
+                    if (validPassword) {
+                        String hashedPassword = PasswordUtil.hashPassword(password);
+                        String updateSql = "UPDATE user SET password = ? WHERE user_id = ?";
+                        try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                            updateStmt.setString(1, hashedPassword);
+                            updateStmt.setInt(2, result.getInt("user_id"));
+                            updateStmt.executeUpdate();
+                        }
+                    }
+                }
+
+                if (!validPassword) {
+                    response.sendRedirect("login.jsp?error=invalid");
+                    return;
+                }
+
+                // Found in user table and password matched
                 int userId = result.getInt("user_id");
                 String userName = result.getString("user_name");
                 String phoneNumber = result.getString("phone_number");
@@ -44,6 +72,7 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("userName", userName);
                 session.setAttribute("userRole", role);
                 session.setAttribute("userPhoneNumber", phoneNumber);
+
                 if ("owner".equals(role)) {
                     response.sendRedirect("Owner-Cars");
                 } else {
@@ -51,7 +80,8 @@ public class LoginServlet extends HttpServlet {
                 }
 
             } else {
-                // Step 2 — not found in user table, check admin table
+                // Step 2 — not found in user table, check admin table.
+                // This keeps your current admin login unchanged. You can hash admin passwords too later.
                 String adminSql = "SELECT * FROM admin WHERE email = ? AND password = ?";
                 PreparedStatement adminStmt = conn.prepareStatement(adminSql);
                 adminStmt.setString(1, email);
@@ -59,7 +89,6 @@ public class LoginServlet extends HttpServlet {
                 ResultSet adminResult = adminStmt.executeQuery();
 
                 if (adminResult.next()) {
-                    // Found in admin table
                     int adminId = adminResult.getInt("admin_id");
 
                     HttpSession session = request.getSession();
@@ -70,7 +99,6 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("AdminDashboardServlet");
 
                 } else {
-                    // Not found anywhere
                     response.sendRedirect("login.jsp?error=invalid");
                 }
             }

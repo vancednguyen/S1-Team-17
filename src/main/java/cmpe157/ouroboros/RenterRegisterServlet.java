@@ -2,6 +2,8 @@ package cmpe157.ouroboros;
 
 import cmpe157.ouroboros.dao.RenterDao;
 import cmpe157.ouroboros.model.Renter;
+import cmpe157.ouroboros.util.PasswordUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,7 +54,7 @@ public class RenterRegisterServlet extends HttpServlet {
         Renter renter = new Renter();
         renter.setUsername(username);
         renter.setEmail(email);
-        renter.setPassword(password);
+        renter.setPassword(PasswordUtil.hashPassword(password));
         renter.setPhoneNumber(phone);
         renter.setDriversLicense(license);
         renter.setLicenseExp(licenseExp);

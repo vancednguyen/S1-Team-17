@@ -2,6 +2,8 @@ package cmpe157.ouroboros;
 
 import cmpe157.ouroboros.dao.OwnerDao;
 import cmpe157.ouroboros.model.Owner;
+import cmpe157.ouroboros.util.PasswordUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -56,7 +58,7 @@ public class OwnerRegisterServlet extends HttpServlet {
         Owner owner = new Owner();
         owner.setUsername(username);
         owner.setEmail(email);
-        owner.setPassword(password);
+        owner.setPassword(PasswordUtil.hashPassword(password));
         owner.setPhoneNumber(phone);
         owner.setDriversLicense(license);
         owner.setLicenseExp(licenseExp);
