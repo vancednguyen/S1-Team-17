@@ -19,23 +19,12 @@ public class BrowseCarServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String keyword = request.getParameter("keyword");
-        String year = request.getParameter("year");
-        String minPrice = request.getParameter("minPrice");
-        String maxPrice = request.getParameter("maxPrice");
-        String seats = request.getParameter("seats");
-
-       // List<Car> cars = carDAO.getAllAvailableCars();
 
         List<Car> cars;
-        boolean hasFilters =
-                (keyword != null && !keyword.trim().isEmpty()) ||
-                        (year != null && !year.trim().isEmpty()) ||
-                        (minPrice != null && !minPrice.trim().isEmpty()) ||
-                        (maxPrice != null && !maxPrice.trim().isEmpty()) ||
-                        (seats != null && !seats.trim().isEmpty());
+        boolean hasFilters = keyword != null && !keyword.trim().isEmpty();
 
         if (hasFilters) {
-            cars = carDAO.searchCars(keyword, year, minPrice, maxPrice, seats);
+            cars = carDAO.searchCars(keyword);
         } else {
             cars = carDAO.getAllAvailableCars();
         }

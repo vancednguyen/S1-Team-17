@@ -47,57 +47,31 @@ public class carDao {
         return cars;
     }
 
-    public List<Car> searchCars(String keyword, String year, String minPrice, String maxPrice, String seats) {
+    public List<Car> searchCars(String keyword) {
         List<Car> cars = new ArrayList<>();
-        List<Object> params = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder(
-                "SELECT car_id, model, year, manufacturer, car_type, transmission_type, " +
-                        "features, seats, bag_capacity, price, availability " +
-                        "FROM car WHERE availability = 'Available' "
-        );
+        String k = "%" + keyword.trim().toLowerCase() + "%";
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append("AND (LOWER(manufacturer) LIKE ? " +
-                    "OR LOWER(model) LIKE ? " +
-                    "OR LOWER(features) LIKE ? " +
-                    "OR LOWER(car_type) LIKE ? " +
-                    "OR LOWER(transmission_type) LIKE ?) ");
-            String k = "%" + keyword.trim().toLowerCase() + "%";
-            params.add(k);
-            params.add(k);
-            params.add(k);
-            params.add(k);
-            params.add(k);
-        }
-
-        if (year != null && !year.trim().isEmpty()) {
-            sql.append("AND year = ? ");
-            params.add(Integer.parseInt(year.trim()));
-        }
-
-        if (minPrice != null && !minPrice.trim().isEmpty()) {
-            sql.append("AND price >= ? ");
-            params.add(Double.parseDouble(minPrice.trim()));
-        }
-
-        if (maxPrice != null && !maxPrice.trim().isEmpty()) {
-            sql.append("AND price <= ? ");
-            params.add(Double.parseDouble(maxPrice.trim()));
-        }
-
-        if (seats != null && !seats.trim().isEmpty()) {
-            sql.append("AND seats = ? ");
-            params.add(Integer.parseInt(seats.trim()));
-        }
-
-        sql.append("ORDER BY price ASC");
+        String sql = "SELECT car_id, model, year, manufacturer, car_type, transmission_type, " +
+                "features, seats, bag_capacity, price, availability " +
+                "FROM car WHERE availability = 'Available' " +
+                "AND (" +
+                "  LOWER(manufacturer) LIKE ? " +
+                "  OR LOWER(model) LIKE ? " +
+                "  OR LOWER(features) LIKE ? " +
+                "  OR LOWER(car_type) LIKE ? " +
+                "  OR LOWER(transmission_type) LIKE ? " +
+                "  OR CAST(year AS CHAR) LIKE ? " +
+                "  OR CAST(seats AS CHAR) LIKE ? " +
+                "  OR CAST(bag_capacity AS CHAR) LIKE ? " +
+                "  OR CAST(price AS CHAR) LIKE ? " +
+                ") ORDER BY price ASC";
 
         try (Connection conn = DBinfo.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
+            for (int i = 1; i <= 9; i++) {
+                ps.setString(i, k);
             }
 
             try (ResultSet rs = ps.executeQuery()) {

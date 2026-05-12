@@ -69,22 +69,9 @@
 </nav>
 
 <form action="Browse-Cars" method="get" class="search-form">
-
-    <input type="text" name="keyword" placeholder="Search make, model, features..."
-           value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>" />
-
-    <input type="number" name="year" placeholder="Year"
-           value="<%= request.getParameter("year") != null ? request.getParameter("year") : "" %>" />
-
-    <input type="number" step="0.01" name="minPrice" placeholder="Min Price"
-           value="<%= request.getParameter("minPrice") != null ? request.getParameter("minPrice") : "" %>" />
-
-    <input type="number" step="0.01" name="maxPrice" placeholder="Max Price"
-           value="<%= request.getParameter("maxPrice") != null ? request.getParameter("maxPrice") : "" %>" />
-
-    <input type="number" name="seats" placeholder="Seats"
-           value="<%= request.getParameter("seats") != null ? request.getParameter("seats") : "" %>" />
-
+    <input type="text" name="keyword" placeholder="Search by make, model, year, type, features..."
+           value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>"
+           class="search-input" autofocus />
     <button type="submit">Search</button>
     <a href="Browse-Cars" class="clear-btn">Clear</a>
 </form>
