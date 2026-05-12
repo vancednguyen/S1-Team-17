@@ -49,7 +49,12 @@
         <span class="link-plain" style="border: none;">Welcome, <%= session.getAttribute("userName") %></span>
 
         <%-- Shows account button if logged in --%>
-        <a href="account.jsp" class="link-plain">Account</a>>
+		<a href="account.jsp" class="link-plain">Account</a>
+
+		<%-- Shows My Reservations link for renters --%>
+		<% if ("renter".equals(session.getAttribute("userRole"))) { %>
+    		<a href="RenterDashboardServlet" class="link-plain">My Reservations</a>
+		<% } %>
 
         <% } else { %>
 
