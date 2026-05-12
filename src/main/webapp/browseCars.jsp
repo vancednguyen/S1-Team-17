@@ -42,12 +42,15 @@
     <div class="logo">Ouroboros<span> EV</span></div>
     <div class="nav-links">
         <a href="index.jsp" class="link-plain">Home</a>
+		<% if ("renter".equals(session.getAttribute("userRole"))) { %>
+    		<a href="RenterDashboardServlet" class="link-plain">My Reservations</a>
+		<% } %>
 
         <% if (session.getAttribute("userEmail") != null) { %>
 
         <span class="link-plain" style="border: none;">
-                Welcome, <%= session.getAttribute("userName") %>
-            </span>
+            Welcome, <%= session.getAttribute("userName") %>
+        </span>
 
         <form action="LogoutServlet" method="get" style="display: inline;">
             <button type="submit" class="link-login"
@@ -64,6 +67,7 @@
         <% } %>
     </div>
 </nav>
+
 <form action="Browse-Cars" method="get" class="search-form">
 
     <input type="text" name="keyword" placeholder="Search make, model, features..."
@@ -84,6 +88,7 @@
     <button type="submit">Search</button>
     <a href="Browse-Cars" class="clear-btn">Clear</a>
 </form>
+
 <div class="content">
     <h1>Available EV Cars</h1>
 
@@ -93,7 +98,7 @@
     %>
     <p>No cars available right now.</p>
     <%
-    } else {
+        } else {
     %>
 
     <table>
@@ -107,6 +112,7 @@
             <th>Transmission</th>
             <th>Car Type</th>
             <th>Features</th>
+            <th>Action</th> <!-- NEW COLUMN -->
         </tr>
         </thead>
         <tbody>
@@ -122,6 +128,22 @@
             <td><%= car.getTransmissionType() %></td>
             <td><%= car.getCarType() %></td>
             <td><%= car.getFeatures() %></td>
+
+            <!-- NEW ACTION CELL -->
+            <td>
+                <% if (session.getAttribute("userEmail") != null &&
+                      "renter".equals(session.getAttribute("userRole"))) { %>
+                    <a href="makeReservation.jsp?carId=<%= car.getCarId() %>"
+                       style="background:#3dba6f; color:#fff; padding:6px 14px; border-radius:6px; text-decoration:none; font-size:13px;">
+                        Rent
+                    </a>
+                <% } else if (session.getAttribute("userEmail") == null) { %>
+                    <a href="login.jsp"
+                       style="color:#aaa; font-size:13px; text-decoration:none;">
+                        Log in to rent
+                    </a>
+                <% } %>
+            </td>
         </tr>
         <%
             }

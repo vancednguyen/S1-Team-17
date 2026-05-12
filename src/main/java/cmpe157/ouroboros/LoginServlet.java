@@ -44,7 +44,11 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("userName", userName);
                 session.setAttribute("userRole", role);
                 session.setAttribute("userPhoneNumber", phoneNumber);
-                response.sendRedirect("index.jsp");
+                if ("owner".equals(role)) {
+                    response.sendRedirect("Owner-Cars");
+                } else {
+                    response.sendRedirect("RenterDashboardServlet");
+                }
 
             } else {
                 // Step 2 — not found in user table, check admin table
