@@ -96,6 +96,25 @@
         .edit-ev-btn:hover {
             background: #111;
         }
+        .view-res-btn {
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            padding: 10px 18px;
+            border-radius: 10px;
+            background: transparent;
+            transition: 0.2s ease;
+        }
+
+        .view-res-btn span {
+            color: #3dba6f;
+        }
+
+        .view-res-btn:hover {
+            background: #111;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +135,7 @@
     <div class="page-header">
         <h1>My EV Listings</h1>
         <a href="Add-Car" class="add-ev-btn">Add Your <span>EV</span></a>
+        <a href="Owner-Reservations" class="view-res-btn">View Your <span>Reservations</span></a>
         <a href="Edit-Cars" class="edit-ev-btn">Edit Your <span>EV</span></a>
     </div>
 

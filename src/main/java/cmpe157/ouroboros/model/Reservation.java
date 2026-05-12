@@ -8,6 +8,8 @@ public class Reservation {
     private String returnTime;
     private double totalCost;
     private String reservationStatus;
+    private String renterName;
+    private String carName;
 
     public Reservation() {}
 
@@ -31,4 +33,10 @@ public class Reservation {
 
     public String getReservationStatus() { return reservationStatus; }
     public void setReservationStatus(String reservationStatus) { this.reservationStatus = reservationStatus; }
+
+    public String getRenterName() { return renterName; }
+    public void setRenterName(String renterName) { this.renterName = renterName; }
+
+    public String getCarName() { return carName; }
+    public void setCarName(String carName) { this.carName = carName; }
 }
