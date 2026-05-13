@@ -65,6 +65,18 @@
         .btn-primary { background: #3dba6f; color: #fff; }
         .btn-primary:hover { background: #35a662; }
         .btn-secondary { background: transparent; color: #aaa; border: 1px solid #2a2a2a; }
+        .back-btn {
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ddd;
+            border: 1px solid #2a2a2a;
+            padding: 8px 18px;
+            border-radius: 10px;
+            background: transparent;
+            transition: 0.2s ease;
+        }
+        .back-btn:hover { background: #111; }
     </style>
 </head>
 <body>
@@ -100,6 +112,11 @@
 </nav>
 
 <div class="content">
+    <% if ("owner".equals(session.getAttribute("userRole"))) { %>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+        <a href="Owner-Cars" class="back-btn">Back to my Listing</a>
+    </div>
+    <% } %>
     <h1><%= car.getManufacturer() %> <%= car.getModel() %></h1>
     <div class="sub">Year <%= car.getYear() %> · <%= car.getCarType() %> · <%= car.getTransmissionType() %> · <%= car.getAvailability() %></div>
 

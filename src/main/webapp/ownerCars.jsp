@@ -160,6 +160,7 @@
             <th>Car Type</th>
             <th>Features</th>
             <th>Availability</th>
+            <th>Details</th>
         </tr>
         </thead>
         <tbody>
@@ -176,6 +177,10 @@
             <td><%= car.getCarType() %></td>
             <td><%= car.getFeatures() %></td>
             <td><%= car.getAvailability() %></td>
+            <td>
+                <a href="CarDetailServlet?carId=<%= car.getCarId() %>"
+                   style="color:#3dba6f; font-size:13px; text-decoration:none;">View</a>
+            </td>
         </tr>
         <%
             }
