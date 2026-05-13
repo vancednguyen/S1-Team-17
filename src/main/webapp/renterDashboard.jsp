@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%@ page import="cmpe157.ouroboros.model.Reservation" %>
 <!DOCTYPE html>
 <html>
@@ -62,6 +63,21 @@
             cursor: pointer;
         }
         .btn-cancel:hover { background: #e05555; color: #fff; }
+        .btn-review {
+            background: #1a3a2a;
+            color: #3dba6f;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-review:hover { background: #3dba6f; color: #fff; }
+        .muted-done { color: #555; font-size: 12px; }
+        .flash-ok { color: #3dba6f; font-size: 14px; margin-bottom: 1rem; padding: 10px 14px; background: #1a2a1a; border-radius: 8px; border: 1px solid #2a4a2a; }
+        .flash-err { color: #e05555; font-size: 14px; margin-bottom: 1rem; padding: 10px 14px; background: #2a1a1a; border-radius: 8px; border: 1px solid #3a1a1a; }
         .empty { color: #555; font-size: 15px; text-align: center; padding: 3rem; background: #111; border-radius: 12px; border: 1px solid #222; }
         .no-access { text-align: center; padding: 80px 2rem; color: #555; font-size: 15px; }
         .no-access a { color: #3dba6f; text-decoration: none; }
@@ -100,6 +116,13 @@
     <div class="welcome">Welcome back, <span><%= session.getAttribute("userName") %></span></div>
     <div class="sub">Here are your current and past reservations</div>
 
+    <% if (request.getAttribute("reviewMessage") != null) { %>
+        <div class="flash-ok"><%= request.getAttribute("reviewMessage") %></div>
+    <% } %>
+    <% if (request.getAttribute("reviewErrorFlash") != null) { %>
+        <div class="flash-err"><%= request.getAttribute("reviewErrorFlash") %></div>
+    <% } %>
+
     <div class="top-bar">
         <div class="section-title">My Reservations</div>
         <a href="Browse-Cars" class="btn-browse">+ Browse Cars</a>
@@ -107,6 +130,11 @@
 
     <%
         List<Reservation> reservations = (List<Reservation>) request.getAttribute("reservations");
+        @SuppressWarnings("unchecked")
+        Set<String> reviewedReservationIds = (Set<String>) request.getAttribute("reviewedReservationIds");
+        if (reviewedReservationIds == null) {
+            reviewedReservationIds = java.util.Collections.emptySet();
+        }
         if (reservations == null || reservations.isEmpty()) {
     %>
         <div class="empty">
@@ -152,7 +180,15 @@
                             <button type="submit" class="btn-cancel"
                                 onclick="return confirm('Cancel this reservation?')">Cancel</button>
                         </form>
-                    <% } %>
+                    <% } else if ("Completed".equals(r.getReservationStatus())) {
+                           boolean already = reviewedReservationIds.contains(r.getReservationId());
+                           if (!already) { %>
+                        <a href="ReviewServlet?reservationId=<%= java.net.URLEncoder.encode(r.getReservationId(), java.nio.charset.StandardCharsets.UTF_8) %>"
+                           class="btn-review">Review</a>
+                    <%     } else { %>
+                        <span class="muted-done">Reviewed</span>
+                    <%     }
+                       } %>
                 </td>
             </tr>
         <% } %>

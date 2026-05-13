@@ -99,7 +99,8 @@
             <th>Transmission</th>
             <th>Car Type</th>
             <th>Features</th>
-            <th>Action</th> <!-- NEW COLUMN -->
+            <th>Details</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -116,7 +117,10 @@
             <td><%= car.getCarType() %></td>
             <td><%= car.getFeatures() %></td>
 
-            <!-- NEW ACTION CELL -->
+            <td>
+                <a href="CarDetailServlet?carId=<%= car.getCarId() %>"
+                   style="color:#3dba6f; font-size:13px; text-decoration:none;">View</a>
+            </td>
             <td>
                 <% if (session.getAttribute("userEmail") != null &&
                       "renter".equals(session.getAttribute("userRole"))) { %>

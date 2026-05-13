@@ -175,6 +175,25 @@ public class carDao {
             return false; //  failure
         }
     }
+    /** Full car row by id (no owner check); for public car detail and reviews. */
+    public Car getCarByIdPublic(String carId) {
+        String sql = "SELECT car_id, model, year, manufacturer, car_type, transmission_type, " +
+                "features, seats, bag_capacity, price, availability " +
+                "FROM car WHERE car_id = ?";
+        try (Connection conn = DBinfo.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, carId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRowToCar(rs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Car getCarById(String carId, int ownerId) {
         String sql = "SELECT car_id, model, year, manufacturer, car_type, transmission_type, " +
                 "features, seats, bag_capacity, price, availability " +
