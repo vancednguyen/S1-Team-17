@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 .kotlin
 .idea
+src/main/java/cmpe157/ouroboros/util/DBinfo.java
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
