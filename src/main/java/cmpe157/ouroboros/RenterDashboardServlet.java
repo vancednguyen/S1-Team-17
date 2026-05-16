@@ -1,7 +1,6 @@
 package cmpe157.ouroboros;
 
 import cmpe157.ouroboros.dao.ReservationDao;
-import cmpe157.ouroboros.dao.ReviewDao;
 import cmpe157.ouroboros.model.Reservation;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,13 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 @WebServlet("/RenterDashboardServlet")
 public class RenterDashboardServlet extends HttpServlet {
 
     private final ReservationDao reservationDao = new ReservationDao();
-    private final ReviewDao reviewDao = new ReviewDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,8 +33,6 @@ public class RenterDashboardServlet extends HttpServlet {
         // Get all reservations for this renter
         List<Reservation> reservations = reservationDao.getReservationsByUserId(userId);
 
-        Set<String> reviewedReservationIds = reviewDao.findReviewedReservationIdsForUser(userId);
-
         HttpSession session = request.getSession();
         String reviewMessage = (String) session.getAttribute("reviewMessage");
         if (reviewMessage != null) {
@@ -51,7 +46,6 @@ public class RenterDashboardServlet extends HttpServlet {
         }
 
         request.setAttribute("reservations", reservations);
-        request.setAttribute("reviewedReservationIds", reviewedReservationIds);
         request.getRequestDispatcher("/renterDashboard.jsp").forward(request, response);
     }
 }

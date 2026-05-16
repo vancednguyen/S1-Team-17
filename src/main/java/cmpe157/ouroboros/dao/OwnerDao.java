@@ -86,30 +86,41 @@ String insertOwner = "INSERT INTO owner (user_id, location) VALUES (?, ?)";
     }
 
     public boolean deleteOwner(String userId) {
+        final int uid;
+        try {
+            uid = Integer.parseInt(userId.trim());
+        } catch (NumberFormatException e) {
+            return false;
+        }
         String deleteOwner = "DELETE FROM owner WHERE user_id = ?";
         String deleteUser = "DELETE FROM user WHERE user_id = ?";
         try (Connection conn = DBinfo.getConnection()) {
             conn.setAutoCommit(false);
-            try (PreparedStatement ps1 = conn.prepareStatement(deleteOwner)) {
-                ps1.setString(1, userId);
-                int rowsAffected = ps1.executeUpdate();
-                if (rowsAffected <= 0) {
-                    conn.rollback();
-                    return false;
+            try {
+                DeletionCascadeHelper.deleteDependentsForOwner(conn, uid);
+                try (PreparedStatement ps1 = conn.prepareStatement(deleteOwner)) {
+                    ps1.setString(1, userId);
+                    int rowsAffected = ps1.executeUpdate();
+                    if (rowsAffected <= 0) {
+                        conn.rollback();
+                        return false;
+                    }
                 }
-            }
 
-            try(PreparedStatement ps2 = conn.prepareStatement(deleteUser)) {
-                ps2.setString(1, userId);
-                int rowsAffected = ps2.executeUpdate();
-                if (rowsAffected <= 0) {
-                    conn.rollback();
-                    return false;
+                try (PreparedStatement ps2 = conn.prepareStatement(deleteUser)) {
+                    ps2.setString(1, userId);
+                    int rowsAffected = ps2.executeUpdate();
+                    if (rowsAffected <= 0) {
+                        conn.rollback();
+                        return false;
+                    }
                 }
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
             }
-            conn.commit();
-            return true;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

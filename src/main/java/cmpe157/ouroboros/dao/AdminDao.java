@@ -6,6 +6,7 @@ import cmpe157.ouroboros.util.DBinfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,24 +82,45 @@ public class AdminDao {
 
         try (Connection conn = DBinfo.getConnection()) {
             conn.setAutoCommit(false);
+            try {
+                boolean isOwner = false;
+                boolean isRenter = false;
+                try (PreparedStatement chk = conn.prepareStatement("SELECT 1 FROM owner WHERE user_id = ? LIMIT 1")) {
+                    chk.setInt(1, userId);
+                    try (ResultSet rs = chk.executeQuery()) {
+                        isOwner = rs.next();
+                    }
+                }
+                try (PreparedStatement chk = conn.prepareStatement("SELECT 1 FROM renter WHERE user_id = ? LIMIT 1")) {
+                    chk.setInt(1, userId);
+                    try (ResultSet rs = chk.executeQuery()) {
+                        isRenter = rs.next();
+                    }
+                }
+                if (isOwner) {
+                    DeletionCascadeHelper.deleteDependentsForOwner(conn, userId);
+                } else if (isRenter) {
+                    DeletionCascadeHelper.deleteDependentsForRenter(conn, userId);
+                }
 
-            // Delete from owner or renter first due to foreign key
-            PreparedStatement ps1 = conn.prepareStatement(deleteOwner);
-            ps1.setInt(1, userId);
-            ps1.executeUpdate();
-
-            PreparedStatement ps2 = conn.prepareStatement(deleteRenter);
-            ps2.setInt(1, userId);
-            ps2.executeUpdate();
-
-            // Then delete from user table
-            PreparedStatement ps3 = conn.prepareStatement(deleteUser);
-            ps3.setInt(1, userId);
-            ps3.executeUpdate();
-
-            conn.commit();
-            return true;
-
+                try (PreparedStatement ps1 = conn.prepareStatement(deleteOwner)) {
+                    ps1.setInt(1, userId);
+                    ps1.executeUpdate();
+                }
+                try (PreparedStatement ps2 = conn.prepareStatement(deleteRenter)) {
+                    ps2.setInt(1, userId);
+                    ps2.executeUpdate();
+                }
+                try (PreparedStatement ps3 = conn.prepareStatement(deleteUser)) {
+                    ps3.setInt(1, userId);
+                    ps3.executeUpdate();
+                }
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         } catch (Exception e) {
             System.out.println("Error deleting user:");
             e.printStackTrace();
@@ -109,10 +131,20 @@ public class AdminDao {
     // Delete a car by car_id
     public boolean deleteCar(String carId) {
         String sql = "DELETE FROM car WHERE car_id = ?";
-        try (Connection conn = DBinfo.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, carId);
-            return ps.executeUpdate() > 0;
+        try (Connection conn = DBinfo.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                DeletionCascadeHelper.deleteDependentsForCar(conn, carId);
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, carId);
+                    boolean removed = ps.executeUpdate() > 0;
+                    conn.commit();
+                    return removed;
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         } catch (Exception e) {
             System.out.println("Error deleting car:");
             e.printStackTrace();

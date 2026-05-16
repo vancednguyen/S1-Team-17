@@ -121,14 +121,14 @@ public class ReviewServlet extends HttpServlet {
             return;
         }
 
-        boolean ok = reviewDao.insertReview(carId, userId, reservationId, rating, comment);
+        boolean ok = reviewDao.insertReview(carId, rating, comment);
         if (ok) {
             session.setAttribute("reviewMessage", "Thanks for your review!");
             session.removeAttribute("reviewError");
         } else {
             session.setAttribute("reviewError",
-                    "Could not save your review. Check the Tomcat/IDE console for lines starting with [ReviewDao.insertReview]. "
-                            + "If you see Unknown column, run sql/migrations/001_review_add_user_reservation.sql on your MySQL database.");
+                    "Could not save your review. Ensure the review table uses Option A columns "
+                            + "(review_id, car_id, rating, review_text). See sql/migrations/002_review_option_a_revert.sql if you need to drop Option B columns.");
         }
         response.sendRedirect("RenterDashboardServlet");
     }

@@ -35,7 +35,7 @@ public class CarDetailServlet extends HttpServlet {
             return;
         }
 
-        List<Review> reviews = reviewDao.findByCarIdWithReviewer(carId);
+        List<Review> reviews = reviewDao.findByCarId(carId);
         double avgRating = reviewDao.getAverageRating(carId);
 
         request.setAttribute("car", car);

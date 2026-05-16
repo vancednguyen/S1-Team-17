@@ -1,6 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Set" %>
 <%@ page import="cmpe157.ouroboros.model.Reservation" %>
 <!DOCTYPE html>
 <html>
@@ -130,11 +129,6 @@
 
     <%
         List<Reservation> reservations = (List<Reservation>) request.getAttribute("reservations");
-        @SuppressWarnings("unchecked")
-        Set<String> reviewedReservationIds = (Set<String>) request.getAttribute("reviewedReservationIds");
-        if (reviewedReservationIds == null) {
-            reviewedReservationIds = java.util.Collections.emptySet();
-        }
         if (reservations == null || reservations.isEmpty()) {
     %>
         <div class="empty">
@@ -180,15 +174,10 @@
                             <button type="submit" class="btn-cancel"
                                 onclick="return confirm('Cancel this reservation?')">Cancel</button>
                         </form>
-                    <% } else if ("Completed".equals(r.getReservationStatus())) {
-                           boolean already = reviewedReservationIds.contains(r.getReservationId());
-                           if (!already) { %>
+                    <% } else if ("Completed".equals(r.getReservationStatus())) { %>
                         <a href="ReviewServlet?reservationId=<%= java.net.URLEncoder.encode(r.getReservationId(), java.nio.charset.StandardCharsets.UTF_8) %>"
                            class="btn-review">Review</a>
-                    <%     } else { %>
-                        <span class="muted-done">Reviewed</span>
-                    <%     }
-                       } %>
+                    <% } %>
                 </td>
             </tr>
         <% } %>

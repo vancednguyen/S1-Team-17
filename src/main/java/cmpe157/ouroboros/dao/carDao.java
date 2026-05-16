@@ -4,6 +4,7 @@ import cmpe157.ouroboros.util.DBinfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -251,14 +252,21 @@ public class carDao {
     public boolean deleteCar(String carId, int ownerId) {
         String sql = "DELETE FROM car WHERE car_id = ? AND user_id = ?";
 
-        try (Connection conn = DBinfo.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, carId);
-            ps.setInt(2, ownerId);
-
-            return ps.executeUpdate() > 0;
-
+        try (Connection conn = DBinfo.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                DeletionCascadeHelper.deleteDependentsForCar(conn, carId);
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, carId);
+                    ps.setInt(2, ownerId);
+                    boolean removed = ps.executeUpdate() > 0;
+                    conn.commit();
+                    return removed;
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
